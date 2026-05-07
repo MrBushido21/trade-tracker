@@ -1,3 +1,5 @@
+export type ItemSort = 'in_stock' | 'sold' | 'idle' | 'transit'
+
 export interface TableItemsI {
     type: 'item'
     id:number,
@@ -7,7 +9,7 @@ export interface TableItemsI {
     item_sell_price?:number
     item_count?:number
     item_sel_count?:number
-    in_stock?:number
+    in_stock?:number | string
 }
 export interface TableExpeceI {
     type: 'expense'
@@ -20,4 +22,29 @@ export interface TableExpeceI {
     delivery?:number
     income?:number
     profit?:number
+}
+
+export interface TotalResultI {
+    table_id:number
+    total_count?:number
+    total_sell?:number
+    total_in_stock?:number
+    income?:number
+    profit?:number
+    total_amount?:number
+}
+
+export interface ItemsI {
+    income: number
+    total_buy: number
+    total_count: number
+    total_in_stock: number
+    total_item_sel_count: number
+}
+
+export interface ExpenseI {
+ totalVps: number 
+ totalDomen: number 
+ totalAdvertisement: number
+ totalDelivery: number 
 }

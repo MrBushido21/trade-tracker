@@ -1,4 +1,6 @@
 node_modules/
 dist/
 db.db
-.env
+/.env
+tables-client/node_modules/
+tables-client/dist/

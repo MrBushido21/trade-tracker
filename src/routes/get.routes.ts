@@ -1,20 +1,19 @@
 import { Router } from "express"
-import { tableRepository } from "../db/tables/db.repository"
 import { getAllMainTables, getFullMainTable } from "../services/mainTable.service"
-import { error } from "node:console"
+import type { ItemSort } from "../types/types"
+
+const VALID_SORTS: ItemSort[] = ['in_stock', 'sold', 'idle', 'transit']
 
 const router = Router()
 router.get('/table', async (req, res) => {
-    let id 
-    if (req.query.id) {
-        id = req.query.id
-    } else {
-        return res.status(400).json({error: "Id`s table undefined"})
-    }
-    const table = await getFullMainTable(Number(id))
-    
-    
-    return res.status(200).json({table})
+    if (!req.query.id) return res.status(400).json({ error: "Id's table undefined" })
+
+    const id = Number(req.query.id)
+    const sortParam = req.query.sort as string | undefined
+    const sort = VALID_SORTS.includes(sortParam as ItemSort) ? sortParam as ItemSort : undefined
+
+    const table = await getFullMainTable(id, sort)
+    return res.status(200).json({ table })
 })
 router.get('/', async (req, res) => {
     try {

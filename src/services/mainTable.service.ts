@@ -1,4 +1,5 @@
 import { tableRepository } from "../db/tables/db.repository"
+import type { ItemSort } from "../types/types"
 
 export const createMainTable = async (tableName:string) => {
     try {
@@ -11,9 +12,9 @@ export const createMainTable = async (tableName:string) => {
 }
 
 
-export const getFullMainTable = async (id:number) => {
+export const getFullMainTable = async (id:number, sort?: ItemSort) => {
     try {
-       const table = await tableRepository.getMainTableFromId(id)
+       const table = await tableRepository.getMainTableFromId(id, sort)
        return table
     } catch (error:any) {
         console.error(error);

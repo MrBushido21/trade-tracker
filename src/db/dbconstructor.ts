@@ -22,24 +22,24 @@ export const sqlRun = (sqlText: string, sqlParams?: unknown[]): Promise<{lastID:
       })
     })
   } 
-export const sqlGet = (sqlText: string, sqlParams?: unknown[]): Promise<any> => {
+export const sqlGet = <T = Record<string, any>>(sqlText: string, sqlParams?: unknown[]): Promise<T> => {
   return new Promise((resolve, reject) => {
     db.get(sqlText, sqlParams, (err: unknown, data) => {
       if (err) {
         reject(err)
       } else {
-        resolve(data)
+        resolve(data as T)
       }
     })
   })
-} 
-export const sqlAll = (sqlText: string, sqlParams?: unknown[]): Promise<any[]> => {
+}
+export const sqlAll = <T = Record<string, any>>(sqlText: string, sqlParams?: unknown[]): Promise<T[]> => {
   return new Promise((resolve, reject) => {
     db.all(sqlText, sqlParams, (err: unknown, data) => {
       if (err) {
         reject(err)
       } else {
-        resolve(data)
+        resolve(data as T[])
       }
     })
   })

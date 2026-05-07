@@ -1,5 +1,6 @@
 import { tableRepository } from "../db/tables/db.repository"
 import { TableExpeceI, TableItemsI } from "../types/types";
+import { calculate } from "../utils/utils";
 
 export const createSecondaryTable = async (table_id: number, tableType: "table_items" | "table_expense") => {
     try {
@@ -16,58 +17,57 @@ export const updateTable = async (data: TableItemsI | TableExpeceI) => {
     if (data.type !== 'item' && data.type !== 'expense') return "Неверный тип"
     
      if (data.type === 'expense') { 
-        const itemsSell = await tableRepository.getAllItemSellPrice()
-    const itemBuy = await tableRepository.getAllBuyPrice()
-    const expense = await tableRepository.getExpenceFromId(1)
-    
-        let income = 0
-        let totalBuy = 0
-        
-        for (const summ of itemsSell) {
-            income += summ.item_sell_price
-        }
-        
-        for (const summ of itemBuy) {
-            totalBuy += summ.item_buy_price
-        }
-        const total_amount = totalBuy + (data.advertisement ?? 0) + (data.delivery ?? 0) + (data.domen ?? 0) + (data.vps ?? 0)
-        const profit = income - expense.total_amount
-        data.income = income 
-        data.total_amount = total_amount 
-        data.profit = profit 
-        return tableRepository.updateExpense(data)
+        await expense(data)
+     } else {
+        await item(data)
      }
-    
-    const table = await tableRepository.updateItems(data)
-
-    if (!table) {
-        return "Чтото пошло не так повтори попытку"
-    }
-    const itemsSell = await tableRepository.getAllItemSellPrice()
-    const itemBuy = await tableRepository.getAllBuyPrice()
-    const expense = await tableRepository.getExpenceFromId(1)
-    
-        let income = 0
-        let totalBuy = 0
-        
-        for (const summ of itemsSell) {
-            income += summ.item_sell_price
-        }
-        
-        for (const summ of itemBuy) {
-            totalBuy += summ.item_buy_price
-        }
-        
-        let total_amount = totalBuy + expense.advertisement + expense.delivery + expense.domen + expense.vps
-
-    const newData = {type: 'expense' as const, table_id: data.table_id, id: 1,
-         total_amount,
-         income,
-         profit: income - total_amount
-        }
-    await tableRepository.updateExpense(newData)
    } catch (error:any) {
     console.error(error);
     throw new Error(error)
    }
+}
+
+
+export const deleteRow = async (id:number, type: "expense" | "item") => {
+    try {
+        await tableRepository.deleteRow(id, type)
+        return "Удалено"
+    } catch (error) {
+        console.error(error);
+        throw new Error('Iternal server error')
+    }
+}
+async function expense(data:TableExpeceI) {
+       const expenceTable = await tableRepository.updateExpense(data)
+
+       if (!expenceTable) throw new Error('Databse error')
+
+        const utils = await calculate(data.table_id)
+        const income = utils.income
+        
+        const total_amount = utils.total_amount
+
+        const profit = income - total_amount
+        
+        const total = {table_id:data.table_id, income, profit, total_amount, total_count: utils.totalCount, total_in_stock: utils.total_in_stock, total_sell: utils.total_item_sel_count}
+
+        const totalResTable = await tableRepository.updateResult(total)
+        return {expenceTable, totalResTable}
+}
+
+async function item (data: TableItemsI) {
+    const table = await tableRepository.updateItems(data)
+
+    if (!table) throw new Error('Databse error')
+        const utils = await calculate(data.table_id)
+    
+        const income = utils.income
+        
+        let total_amount = utils.total_amount
+        const profit = income - total_amount
+        
+        const total = {table_id:data.table_id, income, profit, total_amount, 
+            total_count: utils.totalCount, total_in_stock: utils.total_in_stock, total_sell: utils.total_item_sel_count}
+        const totalResTable = await tableRepository.updateResult(total)
+        return {table, totalResTable}
 }
