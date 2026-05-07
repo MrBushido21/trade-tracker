@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { API_URL } from './config'
 
-const BASE = 'http://localhost:5001'
+const BASE = API_URL
 
 let accessToken: string | null = null
 let onUnauthorized: (() => void) | null = null

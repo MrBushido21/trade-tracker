@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import axios from 'axios'
 import { setAccessToken, setOnUnauthorized } from '../api'
+import { API_URL } from '../config'
 
-const BASE = 'http://localhost:5001'
+const BASE = API_URL
 
 interface AuthContextType {
     isAuthenticated: boolean
