@@ -98,9 +98,10 @@ export const getAllItems = async (table_id:number):Promise<ItemsI> => {
             SUM(item_buy_price)  AS total_buy,
             SUM(item_count)      AS total_count,
             SUM(in_stock)        AS total_in_stock,
-            SUM(item_sel_count)  AS total_item_sel_count
+            SUM(item_sel_count)  AS total_item_sel_count,
+            SUM(item_delivery)   AS total_item_delivery
     FROM table_items
-    WHERE table_id = ? 
+    WHERE table_id = ?
         `, [table_id])
 }
 export const getAllExpense = async (table_id:number):Promise<ExpenseI> => {
@@ -119,7 +120,7 @@ export const getAllExpense = async (table_id:number):Promise<ExpenseI> => {
 
 //UPDATE
 
-export const updateItems = async (data: TableItemsI) => { 
+export const updateItems = async (data: TableItemsI) => {
     await sqlRun(`
         UPDATE table_items SET
             item_name = COALESCE(?, item_name),
@@ -127,7 +128,8 @@ export const updateItems = async (data: TableItemsI) => {
             item_sell_price = COALESCE(?, item_sell_price),
             item_count = COALESCE(?, item_count),
             item_sel_count = COALESCE(?, item_sel_count),
-            in_stock = COALESCE(?, in_stock)
+            in_stock = COALESCE(?, in_stock),
+            item_delivery = COALESCE(?, item_delivery)
             WHERE id = ?
         `, [
         data.item_name ?? null,
@@ -136,6 +138,7 @@ export const updateItems = async (data: TableItemsI) => {
         data.item_count ?? null,
         data.item_sel_count ?? null,
         data.in_stock ?? null,
+        data.item_delivery ?? null,
         data.id
     ])
 

@@ -102,6 +102,7 @@ export interface Item {
     item_count: number | null
     item_sel_count: number | null
     in_stock: number | string | null
+    item_delivery: number | null
     created_at: string
     updated_at: string
 }

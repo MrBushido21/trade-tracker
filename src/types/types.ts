@@ -10,6 +10,7 @@ export interface TableItemsI {
     item_count?:number
     item_sel_count?:number
     in_stock?:number | string
+    item_delivery?:number
 }
 export interface TableExpeceI {
     type: 'expense'
@@ -40,6 +41,7 @@ export interface ItemsI {
     total_count: number
     total_in_stock: number
     total_item_sel_count: number
+    total_item_delivery: number
 }
 
 export interface ExpenseI {

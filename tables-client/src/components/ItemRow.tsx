@@ -21,6 +21,7 @@ export default function ItemRow({ item, onSave }: Props) {
         item_count: item.item_count ?? '',
         item_sel_count: item.item_sel_count ?? '',
         in_stock: item.in_stock ?? '',
+        item_delivery: toDisplay(item.item_delivery),
     })
     const [dirty, setDirty] = useState(false)
 
@@ -32,6 +33,7 @@ export default function ItemRow({ item, onSave }: Props) {
             item_count: item.item_count ?? '',
             item_sel_count: item.item_sel_count ?? '',
             in_stock: item.in_stock ?? '',
+            item_delivery: toDisplay(item.item_delivery),
         })
         setDirty(false)
     }, [item])
@@ -51,6 +53,7 @@ export default function ItemRow({ item, onSave }: Props) {
             item_count: draft.item_count !== '' ? Number(draft.item_count) : undefined,
             item_sel_count: draft.item_sel_count !== '' ? Number(draft.item_sel_count) : undefined,
             in_stock: draft.in_stock !== '' ? draft.in_stock : undefined,
+            item_delivery: toKopecks(draft.item_delivery),
         })
         setDirty(false)
         onSave()
@@ -71,6 +74,7 @@ export default function ItemRow({ item, onSave }: Props) {
         <tr className={rowClass}>
             <td><input className="cell-input" placeholder="Название" value={draft.item_name} onChange={e => set('item_name', e.target.value)} /></td>
             <td><input className="cell-input" placeholder="0.00" type="number" onWheel={e => e.currentTarget.blur()} value={draft.item_buy_price} onChange={e => set('item_buy_price', e.target.value)} /></td>
+            <td><input className="cell-input" placeholder="0.00" type="number" onWheel={e => e.currentTarget.blur()} value={draft.item_delivery} onChange={e => set('item_delivery', e.target.value)} /></td>
             <td><input className="cell-input" placeholder="0.00" type="number" onWheel={e => e.currentTarget.blur()} value={draft.item_sell_price} onChange={e => set('item_sell_price', e.target.value)} /></td>
             <td><input className="cell-input" placeholder="—" type="number" onWheel={e => e.currentTarget.blur()} value={draft.item_count} onChange={e => set('item_count', e.target.value)} /></td>
             <td><input className="cell-input" placeholder="—" type="number" onWheel={e => e.currentTarget.blur()} value={draft.item_sel_count} onChange={e => set('item_sel_count', e.target.value)} /></td>

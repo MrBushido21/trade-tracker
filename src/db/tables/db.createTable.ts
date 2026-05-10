@@ -24,11 +24,13 @@ export const createTables = async (): Promise<void> => {
         item_count INTEGER DEFAULT 0,
         item_sel_count INTEGER DEFAULT 0,
         in_stock INTEGER DEFAULT 0,
+        item_delivery INTEGER DEFAULT 0,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (table_id) REFERENCES tables(id) ON DELETE CASCADE
     );
     `);
+    await sqlRun(`ALTER TABLE table_items ADD COLUMN item_delivery INTEGER DEFAULT 0`).catch(() => {})
     await sqlRun(`
         CREATE TABLE IF NOT EXISTS table_expense (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

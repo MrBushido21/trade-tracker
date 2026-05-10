@@ -14,9 +14,10 @@ export const calculate = async (table_id: number) => {
     let totalDomen = expenses.totalDomen ?? 0
     let totalAdvertisement = expenses.totalAdvertisement ?? 0
     let totalDelivery = expenses.totalDelivery ?? 0
+    let totalItemDelivery = items.total_item_delivery ?? 0
     const total_in_stock =  items.total_in_stock
     const total_item_sel_count =  items.total_item_sel_count
-    
-    let total_amount = totalBuy + totalVps + totalDomen + totalAdvertisement + totalDelivery
+
+    let total_amount = totalBuy + totalVps + totalDomen + totalAdvertisement + totalDelivery + totalItemDelivery
     return { income, totalBuy, total_amount, totalCount, total_in_stock, total_item_sel_count }
 } 

@@ -198,15 +198,14 @@ body {
 /* ── Data table ──────────────────────────────────────────────────────────── */
 
 .table-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
-    min-width: 560px;
+    table-layout: fixed;
 }
 
 .data-table th {
@@ -472,8 +471,14 @@ body {
         font-size: 16px;
     }
 
+    .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .data-table {
         font-size: 12px;
+        min-width: 560px;
     }
 
     .cell-input {

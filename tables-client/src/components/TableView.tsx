@@ -54,12 +54,13 @@ export default function TableView({ table, onRefresh, sort, onSort }: Props) {
                     <thead>
                         <tr>
                             <th>Название</th>
-                            <th>Цена покупки</th>
-                            <th>Цена продажи</th>
-                            <th>Куплено ед.</th>
-                            <th>Продано</th>
-                            <th>В наличии</th>
-                            <th></th>
+                            <th style={{ width: 92 }}>Цена покупки</th>
+                            <th style={{ width: 92 }}>Доставка</th>
+                            <th style={{ width: 92 }}>Цена продажи</th>
+                            <th style={{ width: 76 }}>Куплено</th>
+                            <th style={{ width: 76 }}>Продано</th>
+                            <th style={{ width: 76 }}>В наличии</th>
+                            <th style={{ width: 100 }}></th>
                         </tr>
                     </thead>
                     <tbody>
