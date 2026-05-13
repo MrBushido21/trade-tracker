@@ -1,50 +1,50 @@
 # Trade Tracker
 
-Веб-приложение для учёта товаров: отслеживает покупки, продажи, доставку и расходы, автоматически считает доход и прибыль.
+A web application for tracking goods: monitors purchases, sales, delivery costs, and expenses, and automatically calculates income and profit.
 
-## Структура монорепо
+## Monorepo Structure
 
 ```
-tables/                  ← бэкенд (Node.js + Express + SQLite)
-└── tables-client/       ← фронтенд (React + Vite)
+tables/                  ← backend (Node.js + Express + SQLite)
+└── tables-client/       ← frontend (React + Vite)
 ```
 
-## Стек
+## Stack
 
-| Часть      | Технологии                                           |
-|------------|------------------------------------------------------|
-| Бэкенд     | Node.js, Express 5, TypeScript, SQLite (sqlite3)     |
-| Аутентификация | JWT (access 15 мин), bcryptjs, refresh-токены    |
-| Фронтенд   | React 19, TypeScript, Vite 8, Axios                  |
-| Деплой     | VPS (Hetzner), nginx (порт 4000), PM2 (порт 5001)    |
+| Layer          | Technologies                                         |
+|----------------|------------------------------------------------------|
+| Backend        | Node.js, Express 5, TypeScript, SQLite (sqlite3)     |
+| Auth           | JWT (access 15 min), bcryptjs, refresh tokens        |
+| Frontend       | React 19, TypeScript, Vite 8, Axios                  |
+| Deployment     | VPS (Hetzner), nginx (port 4000), PM2 (port 5001)    |
 
 ---
 
-## Бэкенд
+## Backend
 
-### Запуск
+### Running
 
 ```bash
-# Разработка
+# Development
 npm run dev
 
-# Продакшн
+# Production
 npm run build
 npm start
 ```
 
-### Переменные окружения (.env)
+### Environment Variables (.env)
 
 ```env
 PORT=5001
 JWT_ACCESS_SECRET=your_secret_here
 ```
 
-### База данных
+### Database
 
-SQLite файл `db.db` в корне проекта. Таблицы создаются автоматически при старте (`src/db/tables/db.createTable.ts`).
+SQLite file `db.db` in the project root. Tables are created automatically on startup (`src/db/tables/db.createTable.ts`).
 
-#### Схема
+#### Schema
 
 ```
 tables
@@ -52,22 +52,22 @@ tables
 
 table_items
   id, table_id, item_name
-  item_buy_price INTEGER  (в копейках)
-  item_delivery  INTEGER  (в копейках)
-  item_sell_price INTEGER (в копейках)
+  item_buy_price  INTEGER  (in kopecks)
+  item_delivery   INTEGER  (in kopecks)
+  item_sell_price INTEGER  (in kopecks)
   item_count, item_sel_count
-  in_stock TEXT|INTEGER   ("Едет" или число)
+  in_stock TEXT|INTEGER    ("Едет" / a number)
   created_at, updated_at
 
 table_expense
   id, table_id
-  vps, domen, advertisement, delivery  (в копейках)
+  vps, domen, advertisement, delivery  (in kopecks)
   created_at, updated_at
 
 table_result
   id, table_id
   total_count, total_sell, total_in_stock
-  income, profit, total_amount          (в копейках)
+  income, profit, total_amount          (in kopecks)
   created_at, updated_at
 
 users
@@ -77,41 +77,41 @@ refresh_tokens
   id, user_id, token, expires_at
 ```
 
-> Денежные значения хранятся в **копейках** (целое число). На клиенте делится на 100 для отображения.
+> All monetary values are stored as **integers in kopecks**. The client divides by 100 for display.
 
-### API эндпоинты
+### API Endpoints
 
-#### Аутентификация (не требуют токена)
+#### Auth (no token required)
 
-| Метод | Путь            | Тело                          | Описание                        |
-|-------|-----------------|-------------------------------|---------------------------------|
-| POST  | /auth/login     | `{username, password}`        | Возвращает `accessToken`, `refreshToken` |
-| POST  | /auth/refresh   | `{refreshToken}`              | Обновляет access-токен          |
-| POST  | /auth/logout    | `{refreshToken}`              | Удаляет refresh-токен из БД     |
+| Method | Path           | Body                          | Description                              |
+|--------|----------------|-------------------------------|------------------------------------------|
+| POST   | /auth/login    | `{username, password}`        | Returns `accessToken` and `refreshToken` |
+| POST   | /auth/refresh  | `{refreshToken}`              | Issues a new access token                |
+| POST   | /auth/logout   | `{refreshToken}`              | Deletes the refresh token from the DB    |
 
-#### Таблицы (требуют `Authorization: Bearer <token>`)
+#### Tables (require `Authorization: Bearer <token>`)
 
-| Метод  | Путь          | Параметры / Тело                              | Описание                                  |
-|--------|---------------|-----------------------------------------------|-------------------------------------------|
-| GET    | /             | —                                             | Список всех таблиц                        |
-| GET    | /table        | `?id=<id>&sort=<sort>`                        | Полная таблица с товарами, расходами, итогами |
-| POST   | /createmaintable | `{tableName}`                              | Создать новую таблицу                     |
-| POST   | /createitems  | `{table_id, tableType}`                       | Добавить строку в товары или расходы      |
-| PATCH  | /table/item   | `{type: "item"|"expense", id, ...поля}`       | Обновить строку; пересчитывает итоги      |
-| DELETE | /table/item   | `{id, type: "item"|"expense"}`                | Удалить строку                            |
+| Method | Path             | Params / Body                               | Description                                     |
+|--------|------------------|---------------------------------------------|-------------------------------------------------|
+| GET    | /                | —                                           | List all tables                                 |
+| GET    | /table           | `?id=<id>&sort=<sort>`                      | Full table with items, expenses, and totals     |
+| POST   | /createmaintable | `{tableName}`                               | Create a new table                              |
+| POST   | /createitems     | `{table_id, tableType}`                     | Add a row to items or expenses                  |
+| PATCH  | /table/item      | `{type: "item"\|"expense", id, ...fields}`  | Update a row; recalculates totals               |
+| DELETE | /table/item      | `{id, type: "item"\|"expense"}`             | Delete a row                                    |
 
-#### Параметр сортировки товаров (`sort`)
+#### Item Sort Parameter (`sort`)
 
-| Значение   | Поведение                                        |
-|------------|--------------------------------------------------|
-| `in_stock` | По убыванию остатка                              |
-| `sold`     | По убыванию количества продаж                    |
-| `idle`     | Сначала — в наличии, но ни разу не продавались  |
-| `transit`  | Сначала строки с `in_stock = 'Едет'`            |
+| Value      | Behaviour                                              |
+|------------|--------------------------------------------------------|
+| `in_stock` | Descending by stock quantity                           |
+| `sold`     | Descending by number of sales                          |
+| `idle`     | Items in stock with zero sales first                   |
+| `transit`  | Rows where `in_stock = 'Едет'` (in transit) first     |
 
-### Расчёт итогов (`src/utils/utils.ts`)
+### Totals Calculation (`src/utils/utils.ts`)
 
-После каждого PATCH вызывается `calculate(table_id)`:
+Called after every PATCH via `calculate(table_id)`:
 
 ```
 income       = SUM(item_sell_price)
@@ -120,15 +120,15 @@ total_amount = total_buy + vps + domen + advertisement + delivery_expense + SUM(
 profit       = income - total_amount
 ```
 
-### Аутентификация — детали
+### Auth — Details
 
-- **Access-токен**: JWT, живёт 15 минут, хранится в памяти на клиенте
-- **Refresh-токен**: случайная hex-строка (40 байт), живёт 7 дней, хранится в `localStorage` клиента и в таблице `refresh_tokens` на сервере
-- **Middleware** (`src/middleware/auth.middleware.ts`): проверяет `Authorization: Bearer` на всех маршрутах кроме `/auth/*`
+- **Access token**: JWT, 15-minute lifetime, stored in memory on the client
+- **Refresh token**: random 40-byte hex string, 7-day lifetime, stored in `localStorage` and in the `refresh_tokens` table on the server
+- **Middleware** (`src/middleware/auth.middleware.ts`): validates `Authorization: Bearer` on all routes except `/auth/*`
 
-### Создание пользователя
+### Creating a User
 
-Пользователи создаются вручную скриптом:
+Users are created manually via a script:
 
 ```bash
 npx ts-node src/scripts/createUser.ts
@@ -136,63 +136,63 @@ npx ts-node src/scripts/createUser.ts
 
 ---
 
-## Фронтенд (`tables-client/`)
+## Frontend (`tables-client/`)
 
-### Запуск
+### Running
 
 ```bash
 cd tables-client
-npm run dev      # разработка (http://localhost:5173)
-npm run build    # сборка в dist/
+npm run dev      # development (http://localhost:5173)
+npm run build    # build to dist/
 ```
 
-### Конфигурация API URL
+### API URL Configuration
 
-Файл `src/config.ts` **не коммитится** (в `.gitignore`). Создаётся вручную:
+The file `src/config.ts` is **not committed** (listed in `.gitignore`). Create it manually:
 
 ```ts
 // src/config.ts
 export const API_URL = 'http://localhost:5001'
 ```
 
-На сервере: `export const API_URL = 'http://<IP>:5001'`
+On the server: `export const API_URL = 'http://<IP>:5001'`
 
-Шаблон: `src/config.example.ts`.
+Template: `src/config.example.ts`.
 
-### Архитектура компонентов
+### Component Architecture
 
 ```
 main.tsx
-└── AuthProvider          ← контекст аутентификации
+└── AuthProvider          ← authentication context
     └── App.tsx
-        ├── LoginPage      ← форма входа (если не авторизован)
+        ├── LoginPage      ← login form (shown when not authenticated)
         ├── sidebar
-        │   └── TablesList ← список таблиц + форма создания
+        │   └── TablesList ← table list + create form
         └── content
-            └── TableView  ← таблица товаров + таблица расходов
-                ├── ItemRow    ← редактируемая строка товара
-                └── ExpenseRow ← редактируемая строка расхода
+            └── TableView  ← items table + expenses table
+                ├── ItemRow    ← editable item row
+                └── ExpenseRow ← editable expense row
 ```
 
-### Поток аутентификации
+### Authentication Flow
 
 ```
-1. Старт приложения → AuthProvider проверяет refreshToken в localStorage
-2. Есть токен → POST /auth/refresh → получает accessToken → isAuthenticated = true
-3. Нет токена → показывает LoginPage
-4. Форма входа → POST /auth/login → сохраняет оба токена
-5. На каждый запрос axios подставляет accessToken в заголовок
-6. 401 от API → автоматический POST /auth/refresh → повтор запроса
-7. Refresh истёк → очищает localStorage → редирект на LoginPage
+1. App starts → AuthProvider checks refreshToken in localStorage
+2. Token found → POST /auth/refresh → receives accessToken → isAuthenticated = true
+3. No token → shows LoginPage
+4. Login form → POST /auth/login → stores both tokens
+5. Every request → axios injects accessToken into Authorization header
+6. 401 from API → automatic POST /auth/refresh → retries the original request
+7. Refresh expired → clears localStorage → redirects to LoginPage
 ```
 
-### Цветовая маркировка строк товаров
+### Item Row Color Coding
 
-| Цвет     | Условие                                          |
-|----------|--------------------------------------------------|
-| Зелёный  | Куплено = Продано и в наличии 0 (всё продано)    |
-| Красный  | В наличии > 0, но продаж нет                     |
-| Жёлтый   | В наличии > 0 и есть хотя бы одна продажа        |
-| Синий    | `in_stock = 'Едет'` (товар в пути)               |
+| Color  | Condition                                           |
+|--------|-----------------------------------------------------|
+| Green  | Bought = Sold and stock is 0 (fully sold out)       |
+| Red    | Stock > 0 but no sales yet                          |
+| Yellow | Stock > 0 and at least one sale                     |
+| Blue   | `in_stock = 'Едет'` (item is in transit)            |
 
 ---
