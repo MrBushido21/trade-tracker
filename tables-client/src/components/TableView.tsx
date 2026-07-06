@@ -40,6 +40,7 @@ export default function TableView({ table, onRefresh, sort, onSort }: Props) {
                             { value: 'sold',     label: 'Продажи' },
                             { value: 'idle',     label: 'Простой' },
                             { value: 'transit',  label: 'Едет' },
+                            { value: 'income',   label: 'Доход' },
                         ] as { value: ItemSort; label: string }[]).map(({ value, label }) => (
                             <button
                                 key={value}

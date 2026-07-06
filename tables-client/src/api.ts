@@ -70,7 +70,7 @@ http.interceptors.response.use(
     }
 )
 
-export type ItemSort = 'in_stock' | 'sold' | 'idle' | 'transit'
+export type ItemSort = 'in_stock' | 'sold' | 'idle' | 'transit' | 'income'
 
 export interface Result {
     id: number

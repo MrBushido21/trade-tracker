@@ -2,7 +2,7 @@ import { Router } from "express"
 import { getAllMainTables, getFullMainTable } from "../services/mainTable.service"
 import type { ItemSort } from "../types/types"
 
-const VALID_SORTS: ItemSort[] = ['in_stock', 'sold', 'idle', 'transit']
+const VALID_SORTS: ItemSort[] = ['in_stock', 'sold', 'idle', 'transit', 'income']
 
 const router = Router()
 router.get('/table', async (req, res) => {

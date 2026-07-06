@@ -55,6 +55,7 @@ const sortOrderBy: Record<ItemSort, string> = {
     sold:     `ORDER BY item_sel_count DESC`,
     idle:     `ORDER BY CASE WHEN CAST(in_stock AS INTEGER) > 0 AND (item_sel_count = 0 OR item_sel_count IS NULL) THEN 0 ELSE 1 END ASC`,
     transit:  `ORDER BY CASE WHEN in_stock = 'Едет' THEN 0 ELSE 1 END ASC`,
+    income:   `ORDER BY item_income DESC`,
 }
 
 export const getMainTableFromId = async (id: number, sort?: ItemSort) => {
