@@ -64,7 +64,9 @@ export const getMainTableFromId = async (id: number, sort?: ItemSort) => {
     const orderBy = sort ? sortOrderBy[sort] : ''
 
     const [items, expenses, result] = await Promise.all([
-        sqlAll(`SELECT * FROM table_items WHERE table_id = ? ${orderBy}`, [id]),
+        sqlAll(`SELECT *,
+            (COALESCE(item_sell_price, 0) - (COALESCE(item_delivery, 0) + COALESCE(item_buy_price, 0))) AS item_income
+            FROM table_items WHERE table_id = ? ${orderBy}`, [id]),
         sqlAll(`SELECT * FROM table_expense WHERE table_id = ?`, [id]),
         sqlGet(`SELECT * FROM table_result WHERE table_id = ?`, [id]),
     ])

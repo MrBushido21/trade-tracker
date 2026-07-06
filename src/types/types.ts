@@ -11,6 +11,7 @@ export interface TableItemsI {
     item_sel_count?:number
     in_stock?:number | string
     item_delivery?:number
+    item_income?:number
 }
 export interface TableExpeceI {
     type: 'expense'

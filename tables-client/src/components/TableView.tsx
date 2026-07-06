@@ -60,6 +60,7 @@ export default function TableView({ table, onRefresh, sort, onSort }: Props) {
                             <th style={{ width: 76 }}>Куплено</th>
                             <th style={{ width: 76 }}>Продано</th>
                             <th style={{ width: 76 }}>В наличии</th>
+                            <th style={{ width: 92 }}>Доход</th>
                             <th style={{ width: 100 }}></th>
                         </tr>
                     </thead>

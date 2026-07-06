@@ -79,6 +79,7 @@ export default function ItemRow({ item, onSave }: Props) {
             <td><input className="cell-input" placeholder="—" type="number" onWheel={e => e.currentTarget.blur()} value={draft.item_count} onChange={e => set('item_count', e.target.value)} /></td>
             <td><input className="cell-input" placeholder="—" type="number" onWheel={e => e.currentTarget.blur()} value={draft.item_sel_count} onChange={e => set('item_sel_count', e.target.value)} /></td>
             <td><input className="cell-input" placeholder="—" onWheel={e => e.currentTarget.blur()} value={draft.in_stock} onChange={e => set('in_stock', e.target.value)} /></td>
+            <td><span className="cell-income">{toDisplay(item.item_income)}</span></td>
             <td>
                 {dirty && (
                     <button className="btn btn-save btn-sm" onClick={handleSave}>Сохранить</button>
